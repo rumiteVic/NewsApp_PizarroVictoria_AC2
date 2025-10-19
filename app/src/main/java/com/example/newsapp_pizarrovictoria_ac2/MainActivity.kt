@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -88,59 +89,69 @@ fun FiltrarNoticias(infoNoticias: List<Noticias>, modifier: Modifier = Modifier)
 
     var categoriaActual by remember { mutableStateOf(TipoNoticia.GENSHIN) }
     val noticiasFiltradas = infoNoticias.filter { it.tipoNoticia == categoriaActual }
-    LazyColumn(modifier = modifier) {
-        item{
-            Row (horizontalArrangement = Arrangement.Center, modifier = Modifier.fillMaxWidth().background(color = Color.Blue)){
-                Text(
-                    text = categoriaActual.toString(),
-                    textAlign = TextAlign.Center,
-                    fontSize = 28.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(16.dp)
-                )
-            }
+
+    Column {
+        Row(
+            modifier = modifier
+                .background(Color.Blue)
+                .padding(8.dp)
+        ) {
+            Text(
+                text = categoriaActual.toString(),
+                textAlign = TextAlign.Center,
+                fontSize = 28.sp,
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+            )
         }
-            items(items = noticiasFiltradas){
-                itemEnListaNoticia -> NoticiasCard(infoNoticias = itemEnListaNoticia, modifier = Modifier.padding(all = 16.dp))
-            }
-        item{
-            Row (horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth().padding(all = 16.dp)){
-                Button(onClick = {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Button(
+                onClick = {
                     categoriaActual = when (categoriaActual) {
                         TipoNoticia.HONKAI -> TipoNoticia.GENSHIN
                         TipoNoticia.EXTRA -> TipoNoticia.HONKAI
                         TipoNoticia.GENSHIN -> TipoNoticia.EXTRA
                     }
-                }, modifier = Modifier)
-                {
-                    Text(
-                        text = "◀",
-                        fontSize = 16.sp,
-                        modifier = Modifier
+                },
+                modifier = Modifier.weight(0.1f)
+            ) {
+                Text("◀", fontSize = 20.sp)
+            }
+
+            LazyColumn(
+                modifier = Modifier
+                    .weight(0.8f)
+                    .padding(horizontal = 5.dp)
+            ) {
+                items(noticiasFiltradas) { itemEnListaNoticia ->
+                    NoticiasCard(
+                        infoNoticias = itemEnListaNoticia,
+                        modifier = Modifier.padding(8.dp)
                     )
                 }
-                Button(onClick = {
+            }
+
+            Button(
+                onClick = {
                     categoriaActual = when (categoriaActual) {
                         TipoNoticia.GENSHIN -> TipoNoticia.HONKAI
                         TipoNoticia.HONKAI -> TipoNoticia.EXTRA
                         TipoNoticia.EXTRA -> TipoNoticia.GENSHIN
                     }
-                }, modifier = Modifier)
-                {
-                    Text(
-                        text = "▶",
-                        fontSize = 16.sp,
-                        modifier = Modifier
-                    )
-                }
+                }, modifier = Modifier.weight(0.1f)
+            ) {
+                Text("▶", fontSize = 20.sp)
             }
         }
-
-        }
-
-
+    }
 }
+
 
 @Composable
 fun NoticiasCard(infoNoticias: Noticias, modifier: Modifier = Modifier){
